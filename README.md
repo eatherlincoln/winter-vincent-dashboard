@@ -1,107 +1,34 @@
-# Sheldon Social Media Dashboard
+# Sheldon Simkus Social Dashboard
 
-## Project Info
-**Production URL**: https://travis-boak-dashboard.vercel.app  
-**Lovable Project**: https://lovable.dev/projects/bdf643ad-290d-438c-ba2c-38a826a4baec  
-**Repo**: https://github.com/eatherlincoln/travis-boak-dashboard  
+A React + Vite dashboard for Sheldon Simkus that showcases public-facing campaign stats while exposing a gated admin area for updating live data in Supabase. The UI pulls audience splits, KPIs, and top-performing content directly from Supabase tables/edge functions so marketing stakeholders always see the latest metrics.
 
----
+## Project Links
+- **Production**: https://sheldon-social-media.vercel.app
+- **Lovable project**: https://lovable.dev/projects/bdf643ad-290d-438c-ba2c-38a826a4baec
+- **Repository**: https://github.com/eatherlincoln/sheldon-social-media
 
-## How to Run Locally
+## Tech Stack
+- React 18 with Vite 4
+- Tailwind CSS + shadcn/ui primitives
+- Supabase (database, auth, edge functions)
+- Recharts for data viz
 
-```sh
-# Step 1: Clone the repository
-git clone https://github.com/eatherlincoln/travis-boak-dashboard.git
+## Local Development
+1. Clone the repo  
+   `git clone https://github.com/eatherlincoln/sheldon-social-media.git`
+2. Install dependencies  
+   `npm install`
+3. Copy `.env.example` → `.env` (or create `.env`) and set:
+   ```sh
+   VITE_SUPABASE_URL=<project-url>
+   VITE_SUPABASE_ANON_KEY=<anon-key>
+   ```
+4. Start the Vite dev server  
+   `npm run dev`
 
-# Step 2: Navigate to the project directory
-cd travis-boak-dashboard
+The public dashboard lives at `/`, the email-magic-link auth page at `/auth`, and the gated admin editor at `/admin`.
 
-# Step 3: Install dependencies
-npm install
-
-# Step 4: Start the dev server
-npm run dev
-➡️ After pasting that whole thing, hit **Enter**, then type `MARK` on a new line and hit Enter again.  
-This saves the new README.md.
-
----
-
-### 3. Create/overwrite the **SCHEMA.md**
-Now copy this block:
-
-```bash
-cat > SCHEMA.md <<'MARK'
-# Database Schema (Locked)
-
-## Tables
-
-### `top_posts`
-| Column       | Type      | Constraints                          |
-|--------------|----------|--------------------------------------|
-| id           | uuid     | pk, default uuid_generate_v4()       |
-| platform     | text     | not null                             |
-| rank         | int      | not null                             |
-| url          | text     | not null                             |
-| caption      | text     | default ''                           |
-| image_url    | text     | not null                             |
-| likes        | int      | default 0                            |
-| comments     | int      | default 0                            |
-| shares       | int      | default 0                            |
-| views        | int      | default 0                            |
-| meta         | jsonb    | default '{}'::jsonb                  |
-| updated_at   | timestamptz | default now()                     |
-
-#### Indexes & Constraints
-- `unique(platform, rank)` → ensures slot consistency  
-- `unique(platform, url)` → prevents duplicates  
-
----
-
-### `platform_stats`
-| Column             | Type        |
-|--------------------|-------------|
-| id                 | uuid        |
-| platform           | text        |
-| follower_count     | int         |
-| updated_at         | timestamptz |
-
----
-
-### `audience`
-| Column             | Type        |
-|--------------------|-------------|
-| id                 | uuid        |
-| platform           | text        |
-| label              | text        |
-| percentage         | numeric     |
-| updated_at         | timestamptz |
-
----
-
-## Storage
-- **Bucket:** `thumbnails`
-- Policy: authenticated users can upload  
-- Public read allowed  
-
----
-
-## RLS Policies
-### `top_posts`
-- `select`: `true` (all can read)  
-- `insert/update/delete`: only authenticated  
-
-### `platform_stats`
-- `select`: `true`  
-- `insert/update`: only authenticated  
-
-### `audience`
-- `select`: `true`  
-- `insert/update/delete`: only authenticated  
-
----
-
-## Dedupe Playbook
-- Posts must always be saved with `(platform, rank)`  
-- IG/TikTok = 4 slots, YT = 2 slots  
-- URLs must be unique per platform  
-- Re-upload replaces old post in same slot  
+## Supabase Notes
+- `platform_stats`, `audience`, and `top_posts` tables feed the public site.
+- Edge function `refresh-social-stats` (see `supabase/functions`) refreshes metrics by calling ViewStats + custom scrapers, guarded by Supabase auth/role checks.
+- Admin writes are routed through Supabase Row-Level Security policies; use the provided forms to keep schema constraints intact.
