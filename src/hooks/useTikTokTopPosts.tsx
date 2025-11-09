@@ -1,7 +1,7 @@
 // src/hooks/useTikTokTopPosts.ts
 import { useEffect, useState } from "react";
-import { supabase } from "@supabaseClient";
 import { useRefreshSignal } from "./useAutoRefresh";
+import { fetchDashboardData } from "@/lib/publicDashboard";
 
 type TikTokPost = {
   rank: number;
@@ -23,20 +23,20 @@ export function useTikTokTopPosts() {
     (async () => {
       setLoading(true);
 
-      const { data, error } = await supabase
-        .from("top_posts")
-        .select("*")
-        .eq("platform", "tiktok")
-        .order("rank", { ascending: true });
-
-      if (error) {
-        console.error("Error fetching TikTok posts:", error.message);
-      }
-
-      if (active) {
-        setPosts(data || []);
-        setLoading(false);
-      }
+      fetchDashboardData(version)
+        .then((payload) => {
+          if (!active) return;
+          const list = payload?.top_posts?.tiktok ?? [];
+          setPosts(list as TikTokPost[]);
+        })
+        .catch((err) => {
+          if (!active) return;
+          console.error("Error fetching TikTok posts:", err);
+          setPosts([]);
+        })
+        .finally(() => {
+          if (active) setLoading(false);
+        });
     })();
 
     return () => {

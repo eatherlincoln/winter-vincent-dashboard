@@ -100,11 +100,13 @@ export default function StatsForm() {
     setSaving(true);
     setMsg(null);
     try {
+      const timestamp = new Date().toISOString();
       const payload = PLATFORMS.map((p) => ({
         platform: p,
         followers: toInt(rows[p].followers),
         monthly_views: toInt(rows[p].monthly_views),
         engagement: toFloat(rows[p].engagement), // optional; admin may type or leave blank
+        updated_at: timestamp,
       }));
 
       const { error } = await supabase

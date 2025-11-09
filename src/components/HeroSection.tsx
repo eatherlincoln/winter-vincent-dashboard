@@ -21,11 +21,11 @@ export default function HeroSection() {
 
       {/* Content */}
       <div className="absolute inset-0">
-        <div className="mx-auto h-full max-w-7xl px-4 md:px-6 flex flex-col justify-end">
+        <div className="mx-auto h-full max-w-content px-6 md:px-10 flex flex-col justify-end">
           {/* Title block */}
           <div className="mb-5 md:mb-6">
             <h1 className="text-white text-3xl md:text-5xl font-bold leading-tight drop-shadow-sm">
-              Travis Boak
+              Sheldon Simkus
             </h1>
             <p className="mt-2 text-white/90 text-base md:text-lg drop-shadow-sm">
               Professional Surfer &amp; Content Creator

@@ -1,73 +1,123 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@supabaseClient";
 import { useRefreshSignal } from "./useAutoRefresh";
+import { fetchDashboardData } from "@/lib/publicDashboard";
 
 type Platform = "instagram" | "youtube" | "tiktok";
-type Stats = {
+
+type StatRow = {
   platform: Platform;
+  followers: number;
+  monthly_views: number;
+  engagement: number;
+  updated_at: string | null;
+};
+
+type DeltaRow = {
   followers: number | null;
   monthly_views: number | null;
   engagement: number | null;
-
-  // new
-  followers_delta?: number | null;
-  views_delta?: number | null;
-  engagement_delta?: number | null;
-  updated_at?: string | null;
 };
+
+const PLATFORMS: Platform[] = ["instagram", "youtube", "tiktok"];
+
+const emptyRow = (platform: Platform): StatRow => ({
+  platform,
+  followers: 0,
+  monthly_views: 0,
+  engagement: 0,
+  updated_at: null,
+});
+
+const emptyDelta = (): DeltaRow => ({
+  followers: null,
+  monthly_views: null,
+  engagement: null,
+});
 
 export function usePlatformStats() {
   const { version } = useRefreshSignal();
-  const [data, setData] = useState<Record<Platform, Stats>>({
-    instagram: {
-      platform: "instagram",
-      followers: null,
-      monthly_views: null,
-      engagement: null,
-    },
-    youtube: {
-      platform: "youtube",
-      followers: null,
-      monthly_views: null,
-      engagement: null,
-    },
-    tiktok: {
-      platform: "tiktok",
-      followers: null,
-      monthly_views: null,
-      engagement: null,
-    },
+  const [stats, setStats] = useState<Record<Platform, StatRow>>({
+    instagram: emptyRow("instagram"),
+    youtube: emptyRow("youtube"),
+    tiktok: emptyRow("tiktok"),
   });
+  const [deltas, setDeltas] = useState<Record<Platform, DeltaRow>>({
+    instagram: emptyDelta(),
+    youtube: emptyDelta(),
+    tiktok: emptyDelta(),
+  });
+  const [updatedAt, setUpdatedAt] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let alive = true;
-    (async () => {
-      setLoading(true);
-      const { data: rows } = await supabase
-        .from("platform_stats")
-        .select(
-          "platform, followers, monthly_views, engagement, followers_delta, views_delta, engagement_delta, updated_at"
-        )
-        .in("platform", ["instagram", "youtube", "tiktok"]);
+    setLoading(true);
 
-      if (!alive) return;
-      if (rows) {
-        const next = { ...data };
-        for (const r of rows as any[]) {
-          next[r.platform as Platform] = {
-            ...r,
+    fetchDashboardData(version)
+      .then((payload) => {
+        if (!alive) return;
+        const nextStats: Record<Platform, StatRow> = {
+          instagram: emptyRow("instagram"),
+          youtube: emptyRow("youtube"),
+          tiktok: emptyRow("tiktok"),
+        };
+        const nextDeltas: Record<Platform, DeltaRow> = {
+          instagram: emptyDelta(),
+          youtube: emptyDelta(),
+          tiktok: emptyDelta(),
+        };
+
+        let latestUpdate: string | null = null;
+        (payload?.platform_stats ?? []).forEach((row: any) => {
+          const platform = row.platform as Platform;
+          if (!PLATFORMS.includes(platform)) return;
+          nextStats[platform] = {
+            platform,
+            followers: Number(row.followers ?? 0),
+            monthly_views: Number(row.monthly_views ?? 0),
+            engagement: Number(row.engagement ?? 0),
+            updated_at: row.updated_at ?? null,
           };
-        }
-        setData(next);
-      }
-      setLoading(false);
-    })();
+          nextDeltas[platform] = {
+            followers:
+              typeof row.followers_delta === "number"
+                ? row.followers_delta
+                : null,
+            monthly_views:
+              typeof row.views_delta === "number"
+                ? row.views_delta
+                : typeof row.monthly_views_delta === "number"
+                  ? row.monthly_views_delta
+                  : null,
+            engagement:
+              typeof row.engagement_delta === "number"
+                ? row.engagement_delta
+                : null,
+          };
+
+          if (
+            row.updated_at &&
+            (!latestUpdate || row.updated_at > latestUpdate)
+          ) {
+            latestUpdate = row.updated_at;
+          }
+        });
+
+        setStats(nextStats);
+        setDeltas(nextDeltas);
+        setUpdatedAt(latestUpdate);
+      })
+      .catch((err) => {
+        console.error("Failed to load platform stats:", err);
+      })
+      .finally(() => {
+        if (alive) setLoading(false);
+      });
+
     return () => {
       alive = false;
     };
-    // re-run on refresh tick
   }, [version]);
 
-  return { stats: data, loading };
+  return { stats, deltas, updatedAt, loading };
 }

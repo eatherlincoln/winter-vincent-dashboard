@@ -50,7 +50,7 @@ Deno.serve(async (req) => {
 
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    // Travis Boak YouTube channel ID (extracted from @sheldonsimkus)
+    // Sheldon Simkus YouTube channel ID (extracted from @sheldonsimkus)
     const channelId = "UCKp8YgCM8wfzNHqGY0_Fhfg"; // You may need to verify this ID
 
     console.log("Fetching YouTube stats for channel:", channelId);

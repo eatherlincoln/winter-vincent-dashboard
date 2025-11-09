@@ -10,7 +10,7 @@ export default function PartnershipOpportunities() {
     title: string;
     body: string;
   }) => (
-    <div className="rounded-lg bg-white/10 border border-white/20 p-4 md:p-6">
+    <div className="rounded-2xl bg-white/15 border border-white/25 p-4 md:p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.25)] backdrop-blur-sm">
       <h4 className="font-semibold text-white mb-2">
         {n}. {title}
       </h4>
@@ -19,56 +19,58 @@ export default function PartnershipOpportunities() {
   );
 
   return (
-    <div className="rounded-xl overflow-hidden shadow-lg">
-      <div className="bg-gradient-to-br from-sky-500 to-cyan-600 p-5 md:p-8">
-        <h2 className="text-2xl md:text-3xl font-bold text-white text-center mb-4">
+    <div className="rounded-[28px] bg-gradient-to-br from-[#0d7cd7] via-[#10b4cf] to-[#12d5c6] px-5 py-7 sm:px-8 sm:py-10 text-white shadow-[0_20px_45px_rgba(15,124,215,0.3)] border border-white/20">
+      <div className="text-center max-w-3xl mx-auto">
+        <h2 className="text-2xl sm:text-3xl font-bold mb-3">
           Partnership Opportunities
         </h2>
-        <p className="text-white/90 text-center max-w-4xl mx-auto mb-6 md:mb-8">
-          Partner with Travis Boak — a rising force in surf media whose
+        <p className="text-white/90 text-sm sm:text-base leading-relaxed">
+          Partner with Sheldon Simkus — a rising force in surf media whose
           authentic lifestyle content and world-class surfing consistently
-          engage audiences. With proven performance metrics and a loyal
-          following, Sheldon delivers both reach and real impact.
+          engage audiences across Australia and globally. With proven
+          performance metrics and the credibility to cut through in surf
+          culture, Sheldon offers brands a unique opportunity to align with a
+          content creator who delivers both reach and real impact.
         </p>
+      </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-6">
-          <Tile
-            n={1}
-            title="Content Collaborations"
-            body="Custom video and photo content with your brand naturally integrated into Sheldon's lifestyle."
-          />
-          <Tile
-            n={2}
-            title="Brand Ambassador"
-            body="Ongoing partnerships putting your products front and center across platforms and surf career."
-          />
-          <Tile
-            n={3}
-            title="Event & Travel Integration"
-            body="Leverage trips and competitions to position your brand in premium, culturally relevant moments."
-          />
-          <Tile
-            n={4}
-            title="Custom Campaigns"
-            body="Tailored programs that align with specific goals—launches, demographics, or multi-platform buzz."
-          />
-        </div>
+      <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-5">
+        <Tile
+          n={1}
+          title="Content Collaborations"
+          body="Custom video and photo content created with your brand seamlessly integrated into Sheldon's authentic surf lifestyle. Ideal for brands wanting to tap into surf culture with credibility and creativity."
+        />
+        <Tile
+          n={2}
+          title="Brand Ambassador"
+          body="Ongoing partnerships that put your products front and center across Sheldon's platforms and surf career, building trust, consistency, and long-term equity with his engaged audience."
+        />
+        <Tile
+          n={3}
+          title="Event & Travel Integration"
+          body="Leverage Sheldon's global surf schedule, trips, and competitions to position your brand in premium, culturally relevant moments for high-visibility exposure with impact."
+        />
+        <Tile
+          n={4}
+          title="Custom Campaigns"
+          body="Tailored programs aligned to your goals—whether launching a new product, targeting a key demographic, or sparking buzz across surf and lifestyle media."
+        />
+      </div>
 
-        <div className="flex flex-wrap justify-center gap-2">
-          {[
-            "Authentic Audience",
-            "Growing Revenue",
-            "Multi-Platform Reach",
-            "Professional Content",
-          ].map((t) => (
-            <span
-              key={t}
-              className="bg-white/15 text-white rounded-full text-sm px-3 py-1 border border-white/25"
-            >
-              {t}
-            </span>
-          ))}
-        </div>
+      <div className="mt-6 flex flex-wrap justify-center gap-3">
+        {[
+          "Authentic Audience",
+          "Growing Revenue",
+          "Multi-Platform Reach",
+          "Professional Content",
+        ].map((t) => (
+          <span
+            key={t}
+            className="rounded-full bg-white px-4 py-1 text-sm font-medium text-sky-700 shadow-sm"
+          >
+            {t}
+          </span>
+        ))}
       </div>
     </div>
   );

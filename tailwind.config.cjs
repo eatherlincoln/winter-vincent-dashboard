@@ -4,11 +4,7 @@ module.exports = {
   theme: {
     extend: {
       maxWidth: {
-        content: "1200px", // nice readable width
-        card: "500px", // for About/KPI alignment
-      },
-      spacing: {
-        section: "4rem", // consistent top/bottom padding
+        content: "1120px",
       },
     },
   },

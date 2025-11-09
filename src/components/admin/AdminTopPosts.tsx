@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { supabase } from "@supabaseClient";
 import { recalcEngagement } from "@/lib/engagement";
+import { useRefreshSignal } from "@/hooks/useAutoRefresh";
 import ThumbnailPicker from "@/components/admin/ThumbnailPicker";
 import {
   Instagram,
@@ -61,6 +62,7 @@ function platformMeta(platform: Platform) {
 }
 
 export default function AdminTopPosts({ platform }: { platform: Platform }) {
+  const { tick } = useRefreshSignal();
   const [rows, setRows] = useState<Record<number, PostRow>>({
     1: { url: "", caption: "", image_url: "" },
     2: { url: "", caption: "", image_url: "" },
@@ -148,6 +150,7 @@ export default function AdminTopPosts({ platform }: { platform: Platform }) {
       await recalcEngagement(supabase, platform);
 
       setMsg("Top posts saved ✅");
+      tick();
     } catch (e: any) {
       setMsg(e?.message || "Failed to save top posts.");
     } finally {

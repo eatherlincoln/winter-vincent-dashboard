@@ -1,7 +1,7 @@
 // src/hooks/usePlatformAudience.ts
 import { useEffect, useState } from "react";
-import { supabase } from "@supabaseClient";
-import { useRefreshSignal } from "@/hooks";
+import { useRefreshSignal } from "@/hooks/useAutoRefresh";
+import { fetchDashboardData } from "@/lib/publicDashboard";
 
 export type AgeBand = { range: string; percentage: number };
 export type Country = { country: string; percentage: number };
@@ -25,20 +25,20 @@ export function usePlatformAudience() {
     let alive = true;
     (async () => {
       setLoading(true);
-      const { data, error } = await supabase
-        .from("audience") // the VIEW created above (1 row)
-        .select("*")
-        .limit(1);
-
-      if (!alive) return;
-      if (error) {
-        setError(error.message);
-        setRow(null);
-      } else {
-        setError(null);
-        setRow((data && data[0]) || null);
-      }
-      setLoading(false);
+      fetchDashboardData(version)
+        .then((payload) => {
+          if (!alive) return;
+          setError(null);
+          setRow(payload?.audience || null);
+        })
+        .catch((err) => {
+          if (!alive) return;
+          setError(err instanceof Error ? err.message : String(err));
+          setRow(null);
+        })
+        .finally(() => {
+          if (alive) setLoading(false);
+        });
     })();
     return () => {
       alive = false;

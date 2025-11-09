@@ -16,8 +16,8 @@ export default function Index() {
         <HeroSection />
       </section>
 
-      <main className="mx-auto max-w-content px-4">
-        <section className="mt-section">
+      <main className="mx-auto max-w-content px-6 sm:px-8 pb-24">
+        <section className="pt-10 sm:pt-14">
           <div className="rounded-2xl border border-neutral-200 bg-white p-6 sm:p-8 shadow-sm">
             <AboutSection />
           </div>
@@ -63,20 +63,7 @@ export default function Index() {
         </section>
 
         <section className="mt-8 mb-12">
-          <div className="overflow-hidden rounded-2xl border border-neutral-200 bg-gradient-to-b from-sky-50 to-white p-0 shadow-sm">
-            <div className="border-b border-neutral-200 px-6 py-5">
-              <h2 className="text-lg font-semibold text-neutral-900">
-                Partnership Opportunities
-              </h2>
-              <p className="mt-1 text-sm text-neutral-600">
-                Partner with Travis Boak — authentic lifestyle content,
-                world-class surfing, and proven audience growth.
-              </p>
-            </div>
-            <div className="p-6">
-              <PartnershipOpportunities />
-            </div>
-          </div>
+          <PartnershipOpportunities />
         </section>
       </main>
     </div>

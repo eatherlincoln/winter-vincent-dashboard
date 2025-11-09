@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@supabaseClient";
 import { useRefreshSignal } from "./useAutoRefresh";
+import { fetchDashboardData } from "@/lib/publicDashboard";
 
 type YouTubeVideo = {
   rank: number;
@@ -23,18 +23,20 @@ export function useYouTubeTopVideos() {
     (async () => {
       setLoading(true);
 
-      const { data, error } = await supabase
-        .from("top_posts")
-        .select("*")
-        .eq("platform", "youtube")
-        .order("rank", { ascending: true });
-
-      if (error) console.error("Error fetching YouTube videos:", error.message);
-
-      if (active) {
-        setVideos((data as YouTubeVideo[]) || []);
-        setLoading(false);
-      }
+      fetchDashboardData(version)
+        .then((payload) => {
+          if (!active) return;
+          const list = payload?.top_posts?.youtube ?? [];
+          setVideos(list as YouTubeVideo[]);
+        })
+        .catch((err) => {
+          if (!active) return;
+          console.error("Error fetching YouTube videos:", err);
+          setVideos([]);
+        })
+        .finally(() => {
+          if (active) setLoading(false);
+        });
     })();
 
     return () => {
