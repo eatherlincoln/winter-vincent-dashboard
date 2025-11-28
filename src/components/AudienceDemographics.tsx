@@ -141,7 +141,7 @@ export default function AudienceDemographics() {
     if (!men && women) men = clampPct(100 - women);
 
     // Ages
-    const agesSrc = root.age_bands ?? root.ages ?? {};
+    const agesSrc = root.age_bands ?? root.age_groups ?? root.ages ?? {};
     const ages = {
       "25–34": getAge(agesSrc, "25-34", "25_34"),
       "18–24": getAge(agesSrc, "18-24", "18_24"),

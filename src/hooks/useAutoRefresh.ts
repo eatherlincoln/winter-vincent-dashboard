@@ -21,7 +21,7 @@ function getSnapshot() {
 let bc: BroadcastChannel | null = null;
 try {
   // Safari doesn’t support BroadcastChannel in all versions — so wrap in try/catch
-  bc = new BroadcastChannel("sheldon-refresh-bus");
+  bc = new BroadcastChannel("winter-refresh-bus");
 } catch (_) {
   bc = null;
 }
@@ -40,7 +40,7 @@ function fanout() {
 
   // localStorage fallback (fires 'storage' in other tabs)
   try {
-    localStorage.setItem("__sheldon_refresh_bus__", stamp);
+    localStorage.setItem("__winter_refresh_bus__", stamp);
   } catch {}
 }
 
@@ -54,7 +54,7 @@ if (bc) {
 
 if (typeof window !== "undefined") {
   window.addEventListener("storage", (e) => {
-    if (e.key === "__sheldon_refresh_bus__") {
+    if (e.key === "__winter_refresh_bus__") {
       _version++;
       for (const l of listeners) l();
     }

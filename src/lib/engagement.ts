@@ -7,6 +7,9 @@ export async function recalcEngagement(
   supabase: SupabaseClient,
   platform: Platform
 ) {
+  const { data: userData } = await supabase.auth.getUser();
+  const userId = userData?.user?.id ?? null;
+
   // Pull all the inputs we might need
   const { data, error } = await supabase
     .from("platform_stats")
@@ -23,8 +26,7 @@ export async function recalcEngagement(
     `
     )
     .eq("platform", platform)
-    .limit(1)
-    .single();
+    .maybeSingle();
 
   if (error || !data) {
     // Don't throw, just bail quietly
@@ -62,9 +64,14 @@ export async function recalcEngagement(
   const pct = denominator > 0 ? round2((numerator / denominator) * 100) : 0;
 
   // Persist the computed engagement back into platform_stats
+  const record: any = { platform, engagement_rate: pct };
+  if (userId) record.user_id = userId;
+
   await supabase
     .from("platform_stats")
-    .upsert([{ platform, engagement: pct }], { onConflict: "platform" });
+    .upsert([record], {
+      onConflict: userId ? "user_id,platform" : "platform",
+    });
 }
 
 function num(v: any) {

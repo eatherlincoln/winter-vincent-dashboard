@@ -42,16 +42,22 @@ export default function AudienceGlobalEditor() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
+  const [userId, setUserId] = useState<string | null>(null);
 
   // Load existing global row
   useEffect(() => {
     let alive = true;
     (async () => {
+      const { data: userData } = await supabase.auth.getUser();
+      if (userData?.user?.id) {
+        setUserId(userData.user.id);
+      }
+
       setLoading(true);
       const { data, error } = await supabase
-        .from("audience")
+        .from("platform_audience")
         .select("*")
-        .eq("id", "global")
+        .eq("platform", "instagram")
         .limit(1)
         .maybeSingle();
 
@@ -64,10 +70,10 @@ export default function AudienceGlobalEditor() {
       }
 
       if (data) {
-        const gender_men = toStr(data.gender_men);
-        const gender_women = toStr(data.gender_women);
+        const gender_men = toStr(data.gender?.men ?? data.gender_men);
+        const gender_women = toStr(data.gender?.women ?? data.gender_women);
 
-        const ages = data.age_bands || {};
+        const ages = data.age_groups || data.age_bands || {};
         const countries = Array.isArray(data.countries) ? data.countries : [];
         const cities = Array.isArray(data.cities) ? data.cities : [];
 
@@ -119,10 +125,7 @@ export default function AudienceGlobalEditor() {
 
         setForm(next);
       } else {
-        // ensure there is a row to upsert against
-        await supabase
-          .from("audience")
-          .upsert([{ id: "global" }], { onConflict: "id" });
+        // no row; leave empty form
       }
 
       setLoading(false);
@@ -159,6 +162,12 @@ export default function AudienceGlobalEditor() {
     setSaving(true);
     setMsg(null);
     try {
+      if (!userId) {
+        setMsg("No user session. Please re-login.");
+        setSaving(false);
+        return;
+      }
+
       // Build a loose object reflecting the form, then normalize
       const raw = {
         gender: { men: form.gender.men, women: form.gender.women },
@@ -175,18 +184,18 @@ export default function AudienceGlobalEditor() {
       const normalized = normalizeAudiencePayload(raw);
 
       const payload = {
-        id: "global",
-        gender_men: normalized.gender_men,
-        gender_women: normalized.gender_women,
-        age_bands: normalized.age_bands,
+        user_id: userId,
+        platform: "instagram",
+        gender: { men: normalized.gender_men, women: normalized.gender_women },
+        age_groups: normalized.age_bands,
         countries: normalized.countries,
         cities: normalized.cities,
         updated_at: new Date().toISOString(),
       };
 
       const { error } = await supabase
-        .from("audience")
-        .upsert([payload], { onConflict: "id" });
+        .from("platform_audience")
+        .upsert([payload], { onConflict: "user_id,platform" });
 
       if (error) throw error;
 

@@ -46,15 +46,27 @@ export default function StatsForm() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
+  const [userId, setUserId] = useState<string | null>(null);
+
+  // Get user id up front
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => {
+      if (data?.user?.id) setUserId(data.user.id);
+    });
+  }, []);
 
   // Load current stats
   useEffect(() => {
+    if (!userId) return;
     let alive = true;
     (async () => {
       setLoading(true);
       const { data, error } = await supabase
         .from("platform_stats")
-        .select("*")
+        .select(
+          "platform, follower_count, monthly_views, engagement_rate, monthly_likes, monthly_comments, monthly_shares, monthly_saves"
+        )
+        .eq("user_id", userId)
         .in("platform", PLATFORMS);
 
       if (error) {
@@ -70,9 +82,9 @@ export default function StatsForm() {
         if (hit) {
           next[p] = {
             platform: p,
-            followers: (hit.followers ?? "").toString(),
+            followers: (hit.follower_count ?? "").toString(),
             monthly_views: (hit.monthly_views ?? "").toString(),
-            engagement: (hit.engagement ?? "").toString(),
+            engagement: (hit.engagement_rate ?? "").toString(),
           };
         }
       }
@@ -83,7 +95,7 @@ export default function StatsForm() {
       alive = false;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [userId]);
 
   const setField = (
     platform: Platform,
@@ -97,21 +109,28 @@ export default function StatsForm() {
   };
 
   const saveAll = async () => {
+    if (!userId) {
+      setMsg("No user session. Please re-login.");
+      return;
+    }
+
     setSaving(true);
     setMsg(null);
     try {
       const timestamp = new Date().toISOString();
       const payload = PLATFORMS.map((p) => ({
         platform: p,
-        followers: toInt(rows[p].followers),
+        follower_count: toInt(rows[p].followers),
         monthly_views: toInt(rows[p].monthly_views),
-        engagement: toFloat(rows[p].engagement), // optional; admin may type or leave blank
+        engagement_rate: toFloat(rows[p].engagement), // optional; admin may type or leave blank
+        user_id: userId,
         updated_at: timestamp,
       }));
 
-      const { error } = await supabase
-        .from("platform_stats")
-        .upsert(payload, { onConflict: "platform" });
+      // replace existing rows for this user to avoid conflict issues
+      await supabase.from("platform_stats").delete().eq("user_id", userId);
+
+      const { error } = await supabase.from("platform_stats").insert(payload);
 
       if (error) throw error;
 

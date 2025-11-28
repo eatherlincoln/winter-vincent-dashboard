@@ -35,7 +35,7 @@ export default function ThumbnailPicker({ platform, value, onChange }: Props) {
     <div className="flex items-center gap-3">
       <div className="h-12 w-20 overflow-hidden rounded border bg-neutral-50">
         <img
-          src={value || "/sheldon-profile.png"}
+          src={value || "/winter-avatar.svg"}
           className="h-full w-full object-cover"
           alt=""
         />

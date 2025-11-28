@@ -28,6 +28,7 @@ const Icon = {
 
 export default function TikTokTopPosts() {
   const { posts } = useTikTokTopPosts();
+  const fallback = "/winter-hero.png";
   if (!posts?.length) return null;
 
   return (
@@ -41,24 +42,34 @@ export default function TikTokTopPosts() {
 
       <div className="grid grid-cols-2 gap-4">
         {posts.map((p) => {
-          const base = p.image_url || "/sheldon-profile.png";
+          const hasImg =
+            typeof p.image_url === "string" && p.image_url.trim().length > 0;
+          const base = hasImg ? p.image_url : "/winter-hero.png";
           const src =
-            p.image_url && p.updated_at
+            hasImg && p.updated_at
               ? `${base}${base.includes("?") ? "&" : "?"}v=${new Date(
                   p.updated_at
                 ).getTime()}`
               : base;
 
           return (
-            <div
+            <a
               key={`${p.platform}-${p.rank}`}
-              className="flex flex-col overflow-hidden rounded-lg border bg-white shadow-sm"
+              href={p.url || "#"}
+              target="_blank"
+              rel="noreferrer"
+              className="flex flex-col overflow-hidden rounded-lg border bg-white shadow-sm transition hover:shadow-md"
             >
               <div className="aspect-square w-full overflow-hidden">
                 <img
                   src={src}
                   alt={p.caption || "TikTok post"}
                   className="h-full w-full object-cover"
+                  onError={(e) => {
+                    if (e.currentTarget.dataset.fbk) return;
+                    e.currentTarget.dataset.fbk = "1";
+                    e.currentTarget.src = fallback;
+                  }}
                 />
               </div>
               <div className="flex items-center justify-between p-2 text-sm text-gray-700">
@@ -75,7 +86,7 @@ export default function TikTokTopPosts() {
                   <span>{p.shares?.toLocaleString() ?? 0}</span>
                 </div>
               </div>
-            </div>
+            </a>
           );
         })}
       </div>

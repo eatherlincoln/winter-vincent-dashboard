@@ -73,9 +73,13 @@ export function usePlatformStats() {
           if (!PLATFORMS.includes(platform)) return;
           nextStats[platform] = {
             platform,
-            followers: Number(row.followers ?? 0),
-            monthly_views: Number(row.monthly_views ?? 0),
-            engagement: Number(row.engagement ?? 0),
+            followers: Number(
+              row.followers ?? row.follower_count ?? row.followers_count ?? 0
+            ),
+            monthly_views: Number(
+              row.monthly_views ?? row.views ?? row.view_count ?? 0
+            ),
+            engagement: Number(row.engagement ?? row.engagement_rate ?? 0),
             updated_at: row.updated_at ?? null,
           };
           nextDeltas[platform] = {

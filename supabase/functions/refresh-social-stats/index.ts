@@ -6,7 +6,7 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type",
 };
 
-const supabaseUrl = "https://gmprigvmotrdrayxacnl.supabase.co";
+const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
 const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
 
 Deno.serve(async (req) => {
@@ -65,8 +65,8 @@ Deno.serve(async (req) => {
     }
 
     // Optional: read handles from request body
-    let tiktokHandle = "z";
-    let instagramHandle = "sheldonsimkus";
+    let tiktokHandle = "winterrrr_v";
+    let instagramHandle = "winter_v";
     try {
       const body = await req.json().catch(() => ({}));
       if (typeof body?.tiktokHandle === "string" && body.tiktokHandle.trim()) {

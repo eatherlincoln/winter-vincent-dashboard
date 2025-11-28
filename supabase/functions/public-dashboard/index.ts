@@ -6,15 +6,24 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type",
 };
 
-const supabaseUrl = Deno.env.get("SUPABASE_URL") ??
-  "https://iekmymepjbqwlmqejidv.supabase.co";
-const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+const supabaseUrl =
+  Deno.env.get("SUPABASE_URL") ?? Deno.env.get("SERVICE_URL") ?? "";
+const serviceKey =
+  Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ??
+  Deno.env.get("SERVICE_ROLE_KEY") ??
+  "";
+
+if (!supabaseUrl) {
+  console.error("Missing SUPABASE_URL for public-dashboard");
+}
 
 if (!serviceKey) {
   console.error("Missing SUPABASE_SERVICE_ROLE_KEY for public-dashboard");
 }
 
-const supabase = createClient(supabaseUrl, serviceKey ?? "");
+const supabase = createClient(supabaseUrl ?? "", serviceKey ?? "");
+const PUBLIC_USER_ID =
+  Deno.env.get("PUBLIC_USER_ID") || "8a2f7fc5-4e21-4af5-ab98-80956b3b7fa0";
 
 type Platform = "instagram" | "youtube" | "tiktok";
 const PLATFORMS: Platform[] = ["instagram", "youtube", "tiktok"];
@@ -33,9 +42,19 @@ Deno.serve(async (req) => {
       supabase
         .from("platform_stats")
         .select(
-          "platform, followers, monthly_views, engagement, followers_delta, views_delta, engagement_delta, updated_at"
-        ),
-      supabase.from("audience").select("*").eq("id", "global").maybeSingle(),
+          "platform, follower_count, monthly_views, engagement_rate, updated_at"
+        )
+        .eq("user_id", PUBLIC_USER_ID),
+      supabase
+        .from("platform_audience")
+        .select(
+          "gender, age_groups, countries, cities, updated_at, user_id, platform"
+        )
+        .eq("platform", "instagram")
+        .eq("user_id", PUBLIC_USER_ID)
+        .order("updated_at", { ascending: false })
+        .limit(1)
+        .maybeSingle(),
       supabase
         .from("top_posts")
         .select(
@@ -72,10 +91,14 @@ Deno.serve(async (req) => {
     });
   } catch (error) {
     console.error("public-dashboard error", error);
+    const message =
+      error instanceof Error
+        ? `${error.name}: ${error.message}`
+        : JSON.stringify(error);
     return new Response(
       JSON.stringify({
         success: false,
-        error: error instanceof Error ? error.message : String(error),
+        error: message,
       }),
       {
         status: 500,

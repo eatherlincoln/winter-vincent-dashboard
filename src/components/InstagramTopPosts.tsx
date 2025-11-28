@@ -10,6 +10,7 @@ function k(n: number | null | undefined) {
 
 export default function InstagramTopPosts() {
   const { posts, loading } = useInstagramTopPosts();
+  const fallback = "/winter-hero.png";
 
   return (
     <div>
@@ -19,40 +20,51 @@ export default function InstagramTopPosts() {
       ) : Array.isArray(posts) && posts.length > 0 ? (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {posts.map((p, i) => {
+            const hasImg =
+              typeof p.image_url === "string" && p.image_url.trim().length > 0;
             const src =
-              p.image_url && p.updated_at
+              hasImg && p.updated_at
                 ? `${p.image_url}${
                     p.image_url.includes("?") ? "&" : "?"
                   }v=${new Date(p.updated_at).getTime()}`
-                : "/sheldon-profile.png";
+                : fallback;
 
             return (
-              <article
+              <a
                 key={`${p.platform}-${p.rank}-${i}`}
-                className="rounded-xl overflow-hidden border shadow-sm"
+                href={p.url || "#"}
+                target="_blank"
+                rel="noreferrer"
+                className="block rounded-xl overflow-hidden border shadow-sm transition hover:shadow-md"
               >
-                {/* Square crop so IG tiles match YT column height better */}
-                <div className="relative w-full">
-                  <img
-                    src={src}
-                    alt={p.caption || "Instagram post"}
-                    className="w-full aspect-square object-cover"
-                    loading="lazy"
-                  />
-                </div>
+                <article>
+                  <div className="relative w-full">
+                    <img
+                      src={src}
+                      alt={p.caption || "Instagram post"}
+                      className="w-full aspect-square object-cover"
+                      onError={(e) => {
+                        if (e.currentTarget.dataset.fbk) return;
+                        e.currentTarget.dataset.fbk = "1";
+                        e.currentTarget.src = fallback;
+                      }}
+                      loading="lazy"
+                    />
+                  </div>
 
-                <footer className="flex justify-around text-xs p-2 text-neutral-600">
-                  <span className="inline-flex items-center gap-1">
-                    <Heart size={14} /> {k(p.likes)}
-                  </span>
-                  <span className="inline-flex items-center gap-1">
-                    <MessageCircle size={14} /> {k(p.comments)}
-                  </span>
-                  <span className="inline-flex items-center gap-1">
-                    <Share2 size={14} /> {k(p.shares)}
-                  </span>
-                </footer>
-              </article>
+                  <footer className="flex justify-around text-xs p-2 text-neutral-600">
+                    <span className="inline-flex items-center gap-1">
+                      <Heart size={14} /> {k(p.likes)}
+                    </span>
+                    <span className="inline-flex items-center gap-1">
+                      <MessageCircle size={14} /> {k(p.comments)}
+                    </span>
+                    <span className="inline-flex items-center gap-1">
+                      <Share2 size={14} /> {k(p.shares)}
+                    </span>
+                  </footer>
+                </article>
+              </a>
             );
           })}
         </div>

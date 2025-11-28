@@ -25,12 +25,12 @@ export default function PartnershipOpportunities() {
           Partnership Opportunities
         </h2>
         <p className="text-white/90 text-sm sm:text-base leading-relaxed">
-          Partner with Sheldon Simkus — a rising force in surf media whose
-          authentic lifestyle content and world-class surfing consistently
-          engage audiences across Australia and globally. With proven
-          performance metrics and the credibility to cut through in surf
-          culture, Sheldon offers brands a unique opportunity to align with a
-          content creator who delivers both reach and real impact.
+          Partner with Winter Vincent — a 20-year-old Queenscliff surfer leading
+          the Australia/Oceania QS and one of Australia’s sharpest next-gen
+          talents. Known for seamless rail-to-rail surfing, results in serious
+          waves (including his standout result at maxing Nias) and purpose-led
+          work with Waves for Water and Surfrider, Winter brings brands a mix of
+          high performance, credibility and heart.
         </p>
       </div>
 
@@ -38,31 +38,31 @@ export default function PartnershipOpportunities() {
         <Tile
           n={1}
           title="Content Collaborations"
-          body="Custom video and photo content created with your brand seamlessly integrated into Sheldon's authentic surf lifestyle. Ideal for brands wanting to tap into surf culture with credibility and creativity."
+          body="Custom surf, lifestyle and travel content with your brand woven naturally into Winter’s day-to-day — from Queenscliff sessions to QS events and strike missions."
         />
         <Tile
           n={2}
           title="Brand Ambassador"
-          body="Ongoing partnerships that put your products front and center across Sheldon's platforms and surf career, building trust, consistency, and long-term equity with his engaged audience."
+          body="Long-term partnerships that put your product in his quiver, on his back and in his routine across contests, training, trips and social channels."
         />
         <Tile
           n={3}
           title="Event & Travel Integration"
-          body="Leverage Sheldon's global surf schedule, trips, and competitions to position your brand in premium, culturally relevant moments for high-visibility exposure with impact."
+          body="Plug into Winter’s competition schedule and surf trips to showcase your brand in premium, wave-rich, culturally relevant locations around the world."
         />
         <Tile
           n={4}
           title="Custom Campaigns"
-          body="Tailored programs aligned to your goals—whether launching a new product, targeting a key demographic, or sparking buzz across surf and lifestyle media."
+          body="Tailored campaigns built around your goals — product launches, youth and coastal markets, or purpose-driven stories tied to ocean health and sustainability."
         />
       </div>
 
       <div className="mt-6 flex flex-wrap justify-center gap-3">
         {[
-          "Authentic Audience",
-          "Growing Revenue",
-          "Multi-Platform Reach",
-          "Professional Content",
+          "Next-Gen Credibility",
+          "High-Performance Surfing",
+          "Purpose-Driven Storytelling",
+          "Global Tour Visibility",
         ].map((t) => (
           <span
             key={t}

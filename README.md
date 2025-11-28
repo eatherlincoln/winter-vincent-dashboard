@@ -1,11 +1,11 @@
-# Sheldon Simkus Social Dashboard
+# Winter Vincent Social Dashboard
 
-A React + Vite dashboard for Sheldon Simkus that showcases public-facing campaign stats while exposing a gated admin area for updating live data in Supabase. The UI pulls audience splits, KPIs, and top-performing content directly from Supabase tables/edge functions so marketing stakeholders always see the latest metrics.
+A React + Vite dashboard for Winter Vincent that showcases public-facing campaign stats while exposing a gated admin area for updating live data in Supabase. The UI pulls audience splits, KPIs, and top-performing content directly from Supabase tables/edge functions so marketing stakeholders always see the latest metrics.
 
 ## Project Links
-- **Production**: https://sheldon-social-media.vercel.app
-- **Lovable project**: https://lovable.dev/projects/bdf643ad-290d-438c-ba2c-38a826a4baec
-- **Repository**: https://github.com/eatherlincoln/sheldon-social-media
+- **Production**: (set your deployed Winter site URL)
+- **Lovable project**: (optional)
+- **Repository**: https://github.com/eatherlincoln/winter-vincent-dashboard
 
 ## Tech Stack
 - React 18 with Vite 4
@@ -15,7 +15,7 @@ A React + Vite dashboard for Sheldon Simkus that showcases public-facing campaig
 
 ## Local Development
 1. Clone the repo  
-   `git clone https://github.com/eatherlincoln/sheldon-social-media.git`
+   `git clone https://github.com/eatherlincoln/winter-vincent-dashboard.git`
 2. Install dependencies  
    `npm install`
 3. Copy `.env.example` → `.env` (or create `.env`) and set:

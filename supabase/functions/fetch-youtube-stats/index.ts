@@ -1,4 +1,4 @@
-import { supabase } from "@supabaseClient";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -6,7 +6,7 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type",
 };
 
-const supabaseUrl = "https://gmprigvmotrdrayxacnl.supabase.co";
+const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
 const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
 const youtubeApiKey = Deno.env.get("YOUTUBE_API_KEY");
 
@@ -19,6 +19,10 @@ Deno.serve(async (req) => {
   try {
     if (!youtubeApiKey) {
       throw new Error("YouTube API key not configured");
+    }
+
+    if (!supabaseUrl) {
+      throw new Error("SUPABASE_URL not configured");
     }
 
     if (!supabaseServiceKey) {
@@ -50,8 +54,9 @@ Deno.serve(async (req) => {
 
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    // Sheldon Simkus YouTube channel ID (extracted from @sheldonsimkus)
-    const channelId = "UCKp8YgCM8wfzNHqGY0_Fhfg"; // You may need to verify this ID
+    // Use configured channel ID (set YOUTUBE_CHANNEL_ID in env)
+    const channelId = Deno.env.get("YOUTUBE_CHANNEL_ID") ?? "";
+    if (!channelId) throw new Error("YOUTUBE_CHANNEL_ID not configured");
 
     console.log("Fetching YouTube stats for channel:", channelId);
 
