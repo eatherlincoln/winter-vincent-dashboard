@@ -1,12 +1,14 @@
 import React from "react";
+import { useBrandAssets } from "@/hooks";
 
 const AVATAR = "/winter-profile.png";
 
 export default function AboutSection() {
+  const { assets } = useBrandAssets();
   return (
     <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:gap-5">
       <img
-        src={AVATAR}
+        src={assets.profile || AVATAR}
         alt="Winter Vincent"
         className="h-28 w-28 rounded-full object-cover ring-1 ring-black/5 sm:h-32 sm:w-32"
       />

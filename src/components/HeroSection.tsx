@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
-import { usePlatformStats } from "@/hooks";
+import { usePlatformStats, useBrandAssets } from "@/hooks";
 
-const bgImage = "url('/winter-hero.png')";
+const fallbackHero = "url('/winter-hero.png')";
 
 function formatNumber(n: number) {
   if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
@@ -11,6 +11,7 @@ function formatNumber(n: number) {
 
 export default function HeroSection() {
   const { stats, loading } = usePlatformStats();
+  const { assets } = useBrandAssets();
 
   const { totalMonthly, totalReach } = useMemo(() => {
     const values = Object.values(stats || {});
@@ -24,7 +25,11 @@ export default function HeroSection() {
       {/* Background image */}
       <div
         className="h-[360px] md:h-[440px] w-full bg-cover bg-center"
-        style={{ backgroundImage: bgImage }}
+        style={{
+          backgroundImage: assets.hero
+            ? `url('${assets.hero}')`
+            : fallbackHero,
+        }}
       />
 
       {/* Dark gradient overlay */}

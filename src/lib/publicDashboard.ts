@@ -13,6 +13,7 @@ export type DashboardPayload = {
   }>;
   audience: Record<string, any> | null;
   top_posts: Record<Platform, any[]>;
+  assets?: Record<string, string>;
 };
 
 const endpoint = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/public-dashboard`;

@@ -7,7 +7,7 @@ type SocialAsset = {
   updated_at: string;
 };
 
-export function useSocialAssets(source: "instagram" | "youtube" | "tiktok") {
+export function useSocialAssets(source: string) {
   const [asset, setAsset] = useState<SocialAsset | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

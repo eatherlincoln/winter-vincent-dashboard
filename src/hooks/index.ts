@@ -19,6 +19,7 @@ export { useAnalyticsSnapshot } from "./useAnalyticsSnapshot";
 export { useSocialMetrics } from "./useSocialMetrics";
 export { useViewStats } from "./useViewStats";
 export { useSocialAssets } from "./useSocialAssets";
+export { useBrandAssets } from "./useBrandAssets";
 
 // Utilities
 export { useIsMobile as useMobile } from "./use-mobile";

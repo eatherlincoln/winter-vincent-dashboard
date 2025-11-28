@@ -10,6 +10,7 @@ import AdminLayout from "@/components/admin/AdminLayout";
 // Sections (already in your repo)
 import AudienceGlobalEditor from "@/components/admin/AudienceGlobalEditor";
 import StatsForm from "@/components/admin/StatsForm";
+import BrandAssets from "@/components/admin/BrandAssets";
 
 // Reusable top-posts editor (one component, three uses)
 import AdminTopPosts from "@/components/admin/AdminTopPosts";
@@ -24,6 +25,9 @@ function Admin() {
 
           {/* 2) KPI metrics (followers, monthly views, engagement auto-recalc) */}
           <StatsForm />
+
+          {/* 3) Brand imagery */}
+          <BrandAssets />
 
           {/* 3) Top posts per platform */}
           <div className="space-y-8">

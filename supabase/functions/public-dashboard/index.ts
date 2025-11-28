@@ -38,7 +38,7 @@ Deno.serve(async (req) => {
       throw new Error("Service role key not configured");
     }
 
-    const [statsRes, audienceRes, postsRes] = await Promise.all([
+    const [statsRes, audienceRes, postsRes, assetsRes] = await Promise.all([
       supabase
         .from("platform_stats")
         .select(
@@ -62,11 +62,16 @@ Deno.serve(async (req) => {
         )
         .in("platform", PLATFORMS)
         .order("rank", { ascending: true }),
+      supabase
+        .from("social_media_assets")
+        .select("source, thumb_path, updated_at")
+        .in("source", ["hero", "profile"]),
     ]);
 
     if (statsRes.error) throw statsRes.error;
     if (audienceRes.error) throw audienceRes.error;
     if (postsRes.error) throw postsRes.error;
+    if (assetsRes.error) throw assetsRes.error;
 
     const groupedPosts: Record<Platform, any[]> = {
       instagram: [],
@@ -84,6 +89,11 @@ Deno.serve(async (req) => {
       platform_stats: statsRes.data ?? [],
       audience: audienceRes.data ?? null,
       top_posts: groupedPosts,
+      assets:
+        (assetsRes.data ?? []).reduce((acc: any, row: any) => {
+          acc[row.source] = row.thumb_path;
+          return acc;
+        }, {}) ?? {},
     };
 
     return new Response(JSON.stringify({ success: true, data: payload }), {
